@@ -6,21 +6,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.aspark.lokalassign.model.Job
-import com.aspark.lokalassign.ui.Screen
-import com.aspark.lokalassign.ui.UiState
 import com.aspark.lokalassign.ui.theme.LokalAssignTheme
 import com.aspark.lokalassign.viewModel.JobsViewModel
 
@@ -30,7 +26,9 @@ fun JobsScreen(
     selectedJob: Job,
     onNavigate: (Job) -> Unit,
 ) {
-    when(val uiState = jobsViewModel.jobs.collectAsState().value) {
+    val jobs: LazyPagingItems<Job> = jobsViewModel.jobs.collectAsLazyPagingItems()
+
+   /* when(val uiState = jobsViewModel.jobs.collectAsState().value) {
          is UiState.Success -> {
              CardList(uiState.data) { job ->
                  onNavigate(job)
@@ -43,11 +41,15 @@ fun JobsScreen(
         is UiState.Loading -> {
 
         }
+    }*/
+
+    CardList(jobs) { job ->
+        onNavigate(job)
     }
 }
 
 @Composable
-fun CardList(data: List<Job>, onClick: (Job) -> Unit) {
+fun CardList(data: LazyPagingItems<Job>, onClick: (Job) -> Unit) {
 
     LazyColumn(
         modifier = Modifier
@@ -55,8 +57,8 @@ fun CardList(data: List<Job>, onClick: (Job) -> Unit) {
             .padding(16.dp),
         contentPadding = PaddingValues(top = 16.dp, bottom = 90.dp)
     ) {
-        items(data) { job ->
-            JobCard(job) { onClick(it)}
+        items(data.itemCount) { index ->
+            JobCard(data[index]!!) { onClick(it)}
         }
     }
 }
