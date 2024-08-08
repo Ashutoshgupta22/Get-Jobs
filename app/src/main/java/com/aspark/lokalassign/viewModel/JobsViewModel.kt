@@ -21,17 +21,16 @@ class JobsViewModel: ViewModel() {
     private val repository: JobsRepository = JobsRepository( ApiClient.jobsApi)
     private val _selectedJob = MutableStateFlow(Job())
     val selectedJob = _selectedJob.asStateFlow()
+    private var currentPage = 1;
+    var isLoading = false
+    var endReached = false
 
     init {
         getJobs()
     }
 
-    val jobs: StateFlow<UiState<List<Job>>> = repository.getJobs()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Lazily,
-            UiState.Loading
-        )
+    private val _jobs = MutableStateFlow<UiState<List<Job>>>(UiState.Loading)
+    val jobs: StateFlow<UiState<List<Job>>> = _jobs.asStateFlow()
 
     private var isDataLoaded = false
 
@@ -39,22 +38,39 @@ class JobsViewModel: ViewModel() {
         _selectedJob.value = job
     }
 
-   private fun getJobs() {
+    fun getJobs() {
 
-        if (isDataLoaded) return
+        if (isLoading || endReached) return
+
+        isLoading = true
 
         viewModelScope.launch {
-            repository.getJobs().collect { uiState ->
+            repository.getJobs(currentPage).collect { uiState ->
 
                 when (uiState) {
                     is UiState.Success -> {
-                        Log.i("JobsViewModel", "getJobs: Success")
-                        isDataLoaded = true
+                        Log.i("JobsViewModel", "getJobs: Success page-$currentPage")
+
+                        val currentList = if (_jobs.value is UiState.Success) {
+                            (_jobs.value as UiState.Success<List<Job>>).data.plus(uiState.data)
+                        }
+                        else uiState.data.toMutableList()
+
+                        if (uiState.data.isEmpty()) {
+                            endReached = true
+                        } else {
+                            currentList.plus(uiState.data)
+                            currentPage++
+                        }
+                            _jobs.value = UiState.Success(currentList)
+                            isLoading = false
                     }
 
                     is UiState.Error -> {
                         Log.e("JobsViewModel",
                             "getJobs: Failed - ${uiState.message}")
+                        isLoading = false
+                        _jobs.value = uiState
                     }
 
                     is UiState.Loading -> {

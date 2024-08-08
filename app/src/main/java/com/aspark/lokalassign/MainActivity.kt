@@ -54,8 +54,7 @@ fun MainScreen() {
     ) { innerPadding ->
 
         MyNavHost(navController = navController, innerPadding = innerPadding) { route ->
-            if (route == Screen.JobDetails.route) showBottomBar = false
-            else showBottomBar = true
+            showBottomBar = route != Screen.JobDetails.route
         }
     }
 }

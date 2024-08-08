@@ -10,12 +10,12 @@ import kotlinx.coroutines.flow.flow
 
 class JobsRepository(private val jobsApi: JobsApi) {
 
-    fun getJobs(): Flow<UiState<List<Job>>> = flow {
+    fun getJobs(page: Int): Flow<UiState<List<Job>>> = flow {
 
         emit(UiState.Loading)
 
         try {
-            val jobs = jobsApi.getJobs().results
+            val jobs = jobsApi.getJobs(page).results
             Log.i("JobsRepo", "getJobs: $jobs")
             emit(UiState.Success(jobs))
 
