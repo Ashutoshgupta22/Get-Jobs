@@ -55,14 +55,12 @@ android {
     }
 }
 
-//composeCompiler {
-//    enableStrongSkippingMode = true
-//
-//    reportsDestination = layout.buildDirectory.dir("compose_compiler")
-//    stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
-//}
-
 dependencies {
+
+    //paging
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
+
     //navigation
     implementation(libs.androidx.navigation.compose)
 
