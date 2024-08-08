@@ -2,7 +2,12 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.devtools.ksp")
+//    kotlin("parcelize")
+    id("org.jetbrains.kotlin.plugin.parcelize")
+    alias(libs.plugins.compose.compiler)
 }
+
+
 
 android {
     namespace = "com.aspark.lokalassign"
@@ -49,6 +54,13 @@ android {
         }
     }
 }
+
+//composeCompiler {
+//    enableStrongSkippingMode = true
+//
+//    reportsDestination = layout.buildDirectory.dir("compose_compiler")
+//    stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
+//}
 
 dependencies {
     //navigation

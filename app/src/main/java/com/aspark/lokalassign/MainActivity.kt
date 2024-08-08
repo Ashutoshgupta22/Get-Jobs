@@ -13,10 +13,15 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -39,41 +44,50 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
+    var showBottomBar by remember { mutableStateOf(true) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            NavigationBar {
-                val currentBackStackEntry = navController.currentBackStackEntryAsState()
-                val currentDestination = currentBackStackEntry.value?.destination
-
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.work_outline),
-                            contentDescription = null
-                        )
-                    },
-                    label = { Text("Jobs") },
-                    selected = currentDestination?.route == Screen.Jobs.route,
-                    onClick = { navController.navigate(Screen.Jobs.route) }
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.bookmark_outline),
-                            contentDescription = null
-                        )
-                    },
-                    label = { Text("Bookmarks") },
-                    selected = currentDestination?.route == Screen.Bookmarks.route,
-                    onClick = { navController.navigate(Screen.Bookmarks.route) }
-                )
-            }
+            if (showBottomBar) BottomNavBar(navController = navController)
         }
     ) { innerPadding ->
 
-        MyNavHost(navController = navController, innerPadding = innerPadding)
+        MyNavHost(navController = navController, innerPadding = innerPadding) { route ->
+            if (route == Screen.JobDetails.route) showBottomBar = false
+            else showBottomBar = true
+        }
+    }
+}
+
+@Composable
+fun BottomNavBar(navController: NavHostController) {
+    NavigationBar {
+        val currentBackStackEntry = navController.currentBackStackEntryAsState()
+        val currentDestination = currentBackStackEntry.value?.destination
+
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.work_outline),
+                    contentDescription = null
+                )
+            },
+            label = { Text("Jobs") },
+            selected = currentDestination?.route == Screen.Jobs.route,
+            onClick = { navController.navigate(Screen.Jobs.route) }
+        )
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.bookmark_outline),
+                    contentDescription = null
+                )
+            },
+            label = { Text("Bookmarks") },
+            selected = currentDestination?.route == Screen.Bookmarks.route,
+            onClick = { navController.navigate(Screen.Bookmarks.route) }
+        )
     }
 }
 
