@@ -1,6 +1,6 @@
 package com.aspark.lokalassign.model
 
-data class JobResponse(
+class JobResponse(
     val results: List<Job>
 )
 
