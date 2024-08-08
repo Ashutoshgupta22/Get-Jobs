@@ -59,7 +59,9 @@ fun MyNavHost(
                 val selectedJob by viewModel.selectedJob.collectAsState()
 
                 onNavigate(Screen.JobDetails.route)
-                JobDetailsScreen(selectedJob)
+                JobDetailsScreen(selectedJob){
+                    navController.popBackStack()
+                }
             }
         }
 

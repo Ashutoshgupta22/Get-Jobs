@@ -185,16 +185,16 @@ data class PrimaryDetails(
     @SerializedName("Salary")
     val salary: String,
 
-    @SerializedName("job_type")
+    @SerializedName("Job_Type")
     val jobType: String,
 
-    @SerializedName("experience")
+    @SerializedName("Experience")
     val experience: String,
 
-    @SerializedName("fees_charged")
+    @SerializedName("Fees_Charged")
     val feesCharged: String,
 
-    @SerializedName("qualification")
+    @SerializedName("Qualification")
     val qualification: String
 ): Parcelable
 
