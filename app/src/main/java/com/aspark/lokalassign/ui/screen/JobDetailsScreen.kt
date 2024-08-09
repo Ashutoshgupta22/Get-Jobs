@@ -153,21 +153,27 @@ fun Content(job: Job, modifier: Modifier) {
 
         job?.content?.let {
             val content = parseJobDetailsContent(job.content)
-            Text(
-                text = content.block1,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            Text(
-                text = content.block2,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            Text(
-                text = content.block3,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+            content?.block1?.let { it1 ->
+                Text(
+                    text = it1,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            }
+            content?.block2?.let { it1 ->
+                Text(
+                    text = it1,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            }
+            content?.block3?.let { it1 ->
+                Text(
+                    text = it1,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            }
         }
 
         // Job Tags
