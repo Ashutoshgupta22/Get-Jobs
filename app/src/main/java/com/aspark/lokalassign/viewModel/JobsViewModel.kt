@@ -1,26 +1,34 @@
 package com.aspark.lokalassign.viewModel
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aspark.lokalassign.model.Job
-import com.aspark.lokalassign.network.ApiClient
 import com.aspark.lokalassign.repository.JobsRepository
 import com.aspark.lokalassign.ui.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class JobsViewModel: ViewModel() {
+class JobsViewModel(
+    private val repository: JobsRepository
+) : ViewModel() {
 
-    private val repository: JobsRepository = JobsRepository( ApiClient.jobsApi)
     private val _selectedJob = MutableStateFlow(Job())
     val selectedJob = _selectedJob.asStateFlow()
+
+    private val _jobs = MutableStateFlow<UiState<List<Job>>>(UiState.Loading)
+    val jobs: StateFlow<UiState<List<Job>>> = _jobs.asStateFlow()
+
+    private val _bookmarkedJobs = MutableStateFlow<UiState<List<Job>>>(UiState.Loading)
+    val bookmarkedJobs: StateFlow<UiState<List<Job>>> = _bookmarkedJobs.asStateFlow()
+
+    private val _isBookmarked = MutableStateFlow(false)
+    val isBookmarked: StateFlow<Boolean> = _isBookmarked
+
     private var currentPage = 1;
     var isLoading = false
     var endReached = false
@@ -29,10 +37,14 @@ class JobsViewModel: ViewModel() {
         getJobs()
     }
 
-    private val _jobs = MutableStateFlow<UiState<List<Job>>>(UiState.Loading)
-    val jobs: StateFlow<UiState<List<Job>>> = _jobs.asStateFlow()
-
-    private var isDataLoaded = false
+     fun getBookmarkedJobs() {
+        viewModelScope.launch {
+            repository.getBookmarkedJobs().collect { bookmarkedJobs ->
+                _bookmarkedJobs.value = UiState.Success(bookmarkedJobs)
+                Log.i("JobsViewModel", "getBookmarkedJobs: ${_bookmarkedJobs.value}")
+            }
+        }
+    }
 
     fun selectJob(job: Job) {
         _selectedJob.value = job
@@ -79,5 +91,26 @@ class JobsViewModel: ViewModel() {
                 }
             }
         }
+    }
+
+    fun bookmarkJob(job: Job) {
+        viewModelScope.launch {
+            _isBookmarked.value = true
+            repository.bookmarkJob(job)
+        }
+    }
+
+    fun removeBookmark(jobId: Int) {
+        viewModelScope.launch {
+            _isBookmarked.value = false
+            repository.removeBookmark(jobId)
+        }
+    }
+
+    fun isBookmarked(id: Int) {
+          viewModelScope.launch {
+              _isBookmarked.value = repository.isJobBookmarked(id)
+              Log.i("JobsViewModel", "isBookmarked: id: $id ${_isBookmarked.value}")
+          }
     }
 }
