@@ -68,7 +68,11 @@ fun BottomNavBar(navController: NavHostController) {
         NavigationBarItem(
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.work_outline),
+                    painter = painterResource(id =
+                    if(currentDestination?.route == Screen.Jobs.route)
+                        R.drawable.work_filled
+                        else R.drawable.work_outline
+                    ),
                     contentDescription = null
                 )
             },
@@ -79,7 +83,11 @@ fun BottomNavBar(navController: NavHostController) {
         NavigationBarItem(
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.bookmark_outline),
+                    painter = painterResource(id =
+                    if(currentDestination?.route == Screen.Bookmarks.route)
+                        R.drawable.bookmark_filled
+                    else R.drawable.bookmark_outline
+                    ),
                     contentDescription = null
                 )
             },

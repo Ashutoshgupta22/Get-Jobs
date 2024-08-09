@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.devtools.ksp")
 //    kotlin("parcelize")
-    id("org.jetbrains.kotlin.plugin.parcelize")
+//    id("org.jetbrains.kotlin.plugin.parcelize")
     alias(libs.plugins.compose.compiler)
 }
 
@@ -56,10 +56,6 @@ android {
 }
 
 dependencies {
-
-    //paging
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.paging.compose)
 
     //navigation
     implementation(libs.androidx.navigation.compose)

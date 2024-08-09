@@ -6,9 +6,9 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(entities = [JobEntity::class],
-    version = 1)
+    version = 2)
 abstract class JobsDatabase : RoomDatabase() {
-//    abstract fun recipeDao(): RecipeDao
+    abstract fun jobDao(): JobDao
 
     companion object {
         @Volatile private var instance: JobsDatabase? = null

@@ -2,14 +2,12 @@ package com.aspark.lokalassign.model
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import kotlinx.parcelize.Parcelize
 
 class JobResponse(
     @SerializedName("results")
     val results: List<Job>
 )
 
-@Parcelize
 data class Job(
     @SerializedName("id")
     val id: Int =  0,
@@ -175,9 +173,8 @@ data class Job(
 
     @SerializedName("fees_charged")
     val feesCharged: Int = 0
-): Parcelable
+)
 
-@Parcelize
 data class PrimaryDetails(
     @SerializedName("Place")
     val place: String,
@@ -196,7 +193,7 @@ data class PrimaryDetails(
 
     @SerializedName("Qualification")
     val qualification: String
-): Parcelable
+)
 
 //@Parcelize
 //data class FeeDetails(
@@ -204,7 +201,6 @@ data class PrimaryDetails(
 ////    val v3: List<Any>
 //): Parcelable
 
-@Parcelize
 data class JobTag(
     @SerializedName("value")
     val value: String,
@@ -214,9 +210,9 @@ data class JobTag(
 
     @SerializedName("text_color")
     val textColor: String
-): Parcelable
+)
 
-@Parcelize
+
 data class ContactPreference(
     @SerializedName("preference")
     val preference: Int,
@@ -229,9 +225,8 @@ data class ContactPreference(
 
     @SerializedName("preferred_call_end_time")
     val preferredCallEndTime: String
-): Parcelable
+)
 
-@Parcelize
 data class Creative(
     @SerializedName("file")
     val file: String,
@@ -241,9 +236,8 @@ data class Creative(
 
     @SerializedName("creative_type")
     val creativeType: Int
-): Parcelable
+)
 
-@Parcelize
 data class Location(
     @SerializedName("id")
     val id: Int,
@@ -253,15 +247,13 @@ data class Location(
 
     @SerializedName("state")
     val state: Int
-): Parcelable
+)
 
-@Parcelize
 data class ContentV3(
     @SerializedName("v3")
     val v3: List<V3>
-): Parcelable
+)
 
-@Parcelize
 data class V3(
     @SerializedName("field_key")
     val fieldKey: String,
@@ -271,4 +263,4 @@ data class V3(
 
     @SerializedName("field_value")
     val fieldValue: String
-): Parcelable
+)

@@ -3,7 +3,6 @@
 package com.aspark.lokalassign.ui.screen
 
 import android.graphics.Color.parseColor
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,8 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -35,28 +32,36 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aspark.lokalassign.R
 import com.aspark.lokalassign.model.Job
 import com.aspark.lokalassign.model.parseJobDetailsContent
 import com.aspark.lokalassign.ui.theme.LokalAssignTheme
+import com.aspark.lokalassign.viewModel.JobsViewModel
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun JobDetailsScreen(job: Job, onBackClick: () -> Unit) {
+fun JobDetailsScreen(
+    viewModel: JobsViewModel,
+    job: Job, onBackClick: () -> Unit
+) {
+    LaunchedEffect(job.id) {
+        viewModel.isBookmarked(job.id)
+    }
 
     Scaffold(
         topBar = {
@@ -74,12 +79,14 @@ fun JobDetailsScreen(job: Job, onBackClick: () -> Unit) {
             )
         }
     ) { innerPadding ->
-        Content(job,Modifier.padding(innerPadding))
+        Content(job,Modifier.padding(innerPadding), viewModel)
     }
 }
 
 @Composable
-fun Content(job: Job, modifier: Modifier) {
+fun Content(job: Job, modifier: Modifier,
+            viewModel: JobsViewModel
+            ) {
 
     Column(
         modifier = modifier
@@ -122,17 +129,21 @@ fun Content(job: Job, modifier: Modifier) {
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                var selected by remember { mutableStateOf(false) }
+                val isBookmarked by viewModel.isBookmarked.collectAsState()
 
                 IconButton(
                     modifier = Modifier
                         .size(40.dp),
-                    onClick = { selected = !selected }
+                    onClick = {
+//                        selected = !selected
+                        if(isBookmarked) viewModel.removeBookmark(job.id)
+                        else viewModel.bookmarkJob(job)
+                    }
                 ) {
                     Icon(
                         painter = painterResource(
-                            id = if(!selected) R.drawable.bookmark_outline
-                            else R.drawable.bookmark_filled
+                            id = if(isBookmarked) R.drawable.bookmark_filled
+                            else R.drawable.bookmark_outline
                         ),
                         contentDescription = "Bookmark" )
                         }
@@ -233,6 +244,6 @@ fun Chip(label: String, bgColor: Color, textColor: Color) {
 @Composable
 private fun JobsDetailsScreenPreview() {
     LokalAssignTheme {
-        JobDetailsScreen(Job()) {}
+        JobDetailsScreen(viewModel(), Job()) {}
     }
 }

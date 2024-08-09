@@ -20,22 +20,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aspark.lokalassign.model.Job
+import com.aspark.lokalassign.network.ApiClient
+import com.aspark.lokalassign.repository.JobsRepository
+import com.aspark.lokalassign.room.JobsDatabase
 import com.aspark.lokalassign.ui.UiState
 import com.aspark.lokalassign.ui.theme.LokalAssignTheme
 import com.aspark.lokalassign.viewModel.JobsViewModel
+import com.aspark.lokalassign.viewModel.ViewModelFactory
 
 @Composable
 fun JobsScreen(
+    jobsViewModel: JobsViewModel,
     modifier: Modifier,
-    jobsViewModel: JobsViewModel = viewModel(),
     selectedJob: Job,
     onNavigate: (Job) -> Unit,
 ) {
+
     when (val uiState = jobsViewModel.jobs.collectAsState().value) {
         is UiState.Success -> {
-            Log.i("JobsScreen", "JobsScreen: ${uiState.data}")
+//            Log.i("JobsScreen", "JobsScreen: ${uiState.data}")
             CardList(
                 modifier,
                 data = uiState.data,
@@ -46,11 +52,11 @@ fun JobsScreen(
         }
 
         is UiState.Error -> {
-            Toast.makeText(LocalContext.current, "Something went wrong", Toast.LENGTH_SHORT).show()
+            ErrorScreen()
         }
 
         is UiState.Loading -> {
-            CircularProgressIndicator()
+            LoadingScreen()
         }
     }
 }
@@ -65,8 +71,8 @@ fun CardList(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp),
-        contentPadding = PaddingValues(top = 16.dp, bottom = 90.dp)
+            .padding(start = 16.dp, end = 16.dp),
+        contentPadding = PaddingValues(top = 32.dp, bottom = 90.dp)
     ) {
         itemsIndexed(data, key = { index, job ->
             job.id
@@ -76,15 +82,17 @@ fun CardList(
                 JobCard(job) { onClick(it) }
 
             if (index == data.size - 1) {
-                Log.i("JobScreen", "CardList: size: ${data.size}")
+//                Log.i("JobScreen", "CardList: size: ${data.size}")
                 jobsViewModel.getJobs()
             }
         }
 
         item {
             if (jobsViewModel.isLoading) {
-                CircularProgressIndicator()
-            } else if (jobsViewModel.endReached) {
+                LoadingScreen()
+                Log.i("JobsScreen", "CardList: loading more jobs")
+            }
+            if (jobsViewModel.isEndReached.collectAsState().value) {
                 Text(
                     text = "No more jobs available",
                     modifier = Modifier.fillMaxWidth(),
@@ -123,6 +131,6 @@ fun JobCard(job: Job, onClick: (Job) -> Unit) {
 @Composable
 private fun JobsScreenPreview() {
     LokalAssignTheme {
-        JobsScreen(Modifier, viewModel(), Job(), {})
+        JobsScreen(viewModel(), Modifier, Job(), {})
     }
 }
