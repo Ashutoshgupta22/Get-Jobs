@@ -29,6 +29,8 @@ class JobsViewModel(
     private val _isBookmarked = MutableStateFlow(false)
     val isBookmarked: StateFlow<Boolean> = _isBookmarked
 
+
+
     private var currentPage = 1;
     var isLoading = false
     var endReached = false
@@ -69,7 +71,9 @@ class JobsViewModel(
                         else uiState.data.toMutableList()
 
                         if (uiState.data.isEmpty()) {
+                            Log.i("JobsViewModel", "getJobs: end reached")
                             endReached = true
+                            isLoading = false
                         } else {
                             currentList.plus(uiState.data)
                             currentPage++

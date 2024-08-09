@@ -52,11 +52,11 @@ fun JobsScreen(
         }
 
         is UiState.Error -> {
-            Toast.makeText(LocalContext.current, "Something went wrong", Toast.LENGTH_SHORT).show()
+            ErrorScreen()
         }
 
         is UiState.Loading -> {
-            CircularProgressIndicator()
+            LoadingScreen()
         }
     }
 }
@@ -71,8 +71,8 @@ fun CardList(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp),
-        contentPadding = PaddingValues(top = 16.dp, bottom = 90.dp)
+            .padding(start = 16.dp, end = 16.dp),
+        contentPadding = PaddingValues(top = 32.dp, bottom = 90.dp)
     ) {
         itemsIndexed(data, key = { index, job ->
             job.id
@@ -89,7 +89,8 @@ fun CardList(
 
         item {
             if (jobsViewModel.isLoading) {
-                CircularProgressIndicator()
+                LoadingScreen()
+                Log.i("JobsScreen", "CardList: loading more jobs")
             } else if (jobsViewModel.endReached) {
                 Text(
                     text = "No more jobs available",

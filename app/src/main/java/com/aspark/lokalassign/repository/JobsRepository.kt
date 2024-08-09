@@ -23,7 +23,7 @@ class JobsRepository(
 
         try {
             val jobs = jobsApi.getJobs(page).results
-            Log.i("JobsRepo", "getJobs: $jobs")
+//            Log.i("JobsRepo", "getJobs: $jobs")
             emit(UiState.Success(jobs))
 
         } catch (e: Exception) {
