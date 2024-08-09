@@ -29,11 +29,12 @@ class JobsViewModel(
     private val _isBookmarked = MutableStateFlow(false)
     val isBookmarked: StateFlow<Boolean> = _isBookmarked
 
-
+    private val _isEndReached = MutableStateFlow(false)
+    val isEndReached: StateFlow<Boolean> = _isEndReached
 
     private var currentPage = 1;
     var isLoading = false
-    var endReached = false
+//    var endReached = false
 
     init {
         getJobs()
@@ -54,7 +55,7 @@ class JobsViewModel(
 
     fun getJobs() {
 
-        if (isLoading || endReached) return
+        if (isLoading || _isEndReached.value) return
 
         isLoading = true
 
@@ -72,7 +73,7 @@ class JobsViewModel(
 
                         if (uiState.data.isEmpty()) {
                             Log.i("JobsViewModel", "getJobs: end reached")
-                            endReached = true
+                            _isEndReached.value = true
                             isLoading = false
                         } else {
                             currentList.plus(uiState.data)

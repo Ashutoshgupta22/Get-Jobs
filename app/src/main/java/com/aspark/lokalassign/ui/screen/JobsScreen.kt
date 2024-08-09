@@ -91,7 +91,8 @@ fun CardList(
             if (jobsViewModel.isLoading) {
                 LoadingScreen()
                 Log.i("JobsScreen", "CardList: loading more jobs")
-            } else if (jobsViewModel.endReached) {
+            }
+            if (jobsViewModel.isEndReached.collectAsState().value) {
                 Text(
                     text = "No more jobs available",
                     modifier = Modifier.fillMaxWidth(),
