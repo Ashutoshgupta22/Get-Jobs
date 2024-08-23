@@ -65,21 +65,17 @@ class JobsViewModel(
                 when (uiState) {
                     is UiState.Success -> {
                         Log.i("JobsViewModel", "getJobs: Success page-$currentPage")
+                        val newJobs = uiState.data
 
-                        val currentList = if (_jobs.value is UiState.Success) {
-                            (_jobs.value as UiState.Success<List<Job>>).data.plus(uiState.data)
-                        }
-                        else uiState.data.toMutableList()
+                        val currentList = (_jobs.value as? UiState.Success)?.data ?: emptyList()
+                        val updatedList = currentList.plus(newJobs)
 
                         if (uiState.data.isEmpty()) {
-                            Log.i("JobsViewModel", "getJobs: end reached")
                             _isEndReached.value = true
-                            isLoading = false
                         } else {
-                            currentList.plus(uiState.data)
                             currentPage++
                         }
-                            _jobs.value = UiState.Success(currentList)
+                            _jobs.value = UiState.Success(updatedList)
                             isLoading = false
                     }
 
